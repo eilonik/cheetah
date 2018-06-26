@@ -8,7 +8,7 @@ $rows = array();
 $duplicate_sku = array();
 $no_sku = array();
 
-//Reads the csv into appropriate arrays
+//Reads the csv into separate arrays
 if (($handle = fopen($file, "r")) !== false) {
     while (($data = fgetcsv($handle, 1000, ',','"')) !== false) {
         if($row != 1) {
