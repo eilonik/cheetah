@@ -13,17 +13,6 @@ class Product {
     }
 
     public function getQueryValues($bind) {
-
-        $this->product_name = str_replace("\\", "\\\\", $this->product_name);
-        $this->photo_url = str_replace("\\", "\\\\", $this->photo_url);
-        $this->barcode = str_replace("\\", "\\\\", $this->barcode);
-        $this->producer = str_replace("\\", "\\\\", $this->producer);
-
-        $this->product_name = str_replace("'", "\'", $this->product_name);
-        $this->photo_url = str_replace("'", "\'", $this->photo_url);
-        $this->barcode = str_replace("'", "\'", $this->barcode);
-        $this->producer = str_replace("'", "\'", $this->producer);
-
         return ":product_name_$bind,:photo_url_$bind,:barcode_$bind,:sku_$bind,:price_cents_$bind,:producer_$bind";
     }
 
