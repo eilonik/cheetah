@@ -47,13 +47,32 @@ class Control {
             return 0;
         }
         $now = time();
+        $inserted = 0;
+        $binds = array();
         $query = 'INSERT INTO products (product_name,photo_url,barcode,sku,price_cents,producer,added) VALUES ';
+        $values = "";
+        $i = 1;
         foreach ($rows as $row) {
-            $query .= '(' . $row->getQueryValues() . ",$now" . '),';
+            $query_string = $row->getQueryValues($i);
+            $values .= '(' . $query_string . ",$now" . '),';
+            $binds = array_merge($binds, $row->getQueryBinds($i));
+            if($i % 1000 == 0) {
+                $values = substr($values, 0, strlen($values) - 1);
+                $stm = $this->db->prepare($query . $values);
+                $stm->execute($binds);
+                $inserted += $stm->rowCount();
+                $values = "";
+                $binds = array();
+            }
+            $i++;
         }
-        $query = substr($query, 0, strlen($query) - 1);
-        $stm = $this->db->query($query);
-        return $stm->rowCount();
+        if(!empty($values)) {
+            $values = substr($values, 0, strlen($values) - 1);
+            $stm = $this->db->prepare($query . $values);
+            $stm->execute($binds);
+            $inserted += $stm->rowCount();
+        }
+        return $inserted;
     }
 
     public function deleteBatch($skus) {

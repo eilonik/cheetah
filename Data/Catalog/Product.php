@@ -12,7 +12,8 @@ class Product {
         return $obj;
     }
 
-    public function getQueryValues() {
+    public function getQueryValues($bind) {
+
         $this->product_name = str_replace("\\", "\\\\", $this->product_name);
         $this->photo_url = str_replace("\\", "\\\\", $this->photo_url);
         $this->barcode = str_replace("\\", "\\\\", $this->barcode);
@@ -23,23 +24,27 @@ class Product {
         $this->barcode = str_replace("'", "\'", $this->barcode);
         $this->producer = str_replace("'", "\'", $this->producer);
 
-        $this->product_name = mysql_real_escape_string($this->product_name);
-        $this->photo_url = mysql_real_escape_string($this->photo_url);
-        $this->barcode = mysql_real_escape_string($this->barcode);
-        $this->producer = mysql_real_escape_string($this->producer);
-        $this->sku = mysql_real_escape_string($this->sku);
-        $this->price_cents = mysql_real_escape_string($this->price_cents);
+        return ":product_name_$bind,:photo_url_$bind,:barcode_$bind,:sku_$bind,:price_cents_$bind,:producer_$bind";
+    }
 
-        return "'$this->product_name','$this->photo_url','$this->barcode','$this->sku','$this->price_cents','$this->producer'";
+    public function getQueryBinds($bind) {
+        return array(
+            "product_name_$bind" => $this->product_name,
+            "photo_url_$bind" => $this->photo_url,
+            "barcode_$bind" => $this->barcode,
+            "sku_$bind" => $this->sku,
+            "price_cents_$bind" => $this->price_cents,
+            "producer_$bind" => $this->producer
+        );
     }
 
     public function equals($other) {
         return $this->product_name == $other->product_name &&
-                $this->photo_url == $other->photo_url &&
-                $this->barcode == $other->barcode &&
-                $this->sku == $other->sku &&
-                $this->price_cents == $other->price_cents &&
-                $this->producer == $other->producer;
+            $this->photo_url == $other->photo_url &&
+            $this->barcode == $other->barcode &&
+            $this->sku == $other->sku &&
+            $this->price_cents == $other->price_cents &&
+            $this->producer == $other->producer;
     }
 
     public function setProperties($data) {
