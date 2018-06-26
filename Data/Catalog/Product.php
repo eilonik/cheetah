@@ -23,6 +23,13 @@ class Product {
         $this->barcode = str_replace("'", "\'", $this->barcode);
         $this->producer = str_replace("'", "\'", $this->producer);
 
+        $this->product_name = mysql_real_escape_string($this->product_name);
+        $this->photo_url = mysql_real_escape_string($this->photo_url);
+        $this->barcode = mysql_real_escape_string($this->barcode);
+        $this->producer = mysql_real_escape_string($this->producer);
+        $this->sku = mysql_real_escape_string($this->sku);
+        $this->price_cents = mysql_real_escape_string($this->price_cents);
+
         return "'$this->product_name','$this->photo_url','$this->barcode','$this->sku','$this->price_cents','$this->producer'";
     }
 
