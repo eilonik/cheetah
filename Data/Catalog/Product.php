@@ -24,6 +24,10 @@ class Product {
         return "product_name=:product_name$bind,photo_url=:photo_url$bind,barcode=:barcode$bind,sku=:sku$bind,price_cents=:price_cents$bind,producer=:producer$bind";
     }
 
+    public function getTable() {
+        return "products";
+    }
+
     public function getQueryBinds($bind) {
         return array(
             "product_name$bind" => $this->product_name,

@@ -13,11 +13,13 @@ class Control {
         $this->obj_class = $obj_class;
     }
 
-    public function getByProducer($producer, $page = 1) {
+    public function getByField($field, $producer, $page = 1) {
         $binds = array();
-        $query = "SELECT SQL_CALC_FOUND_ROWS * FROM products ";
+        $inst = new $this->obj_class();
+        $tbl = $inst->getTable();
+        $query = "SELECT SQL_CALC_FOUND_ROWS * FROM $tbl ";
         if($producer) {
-            $query .= "WHERE producer=? ";
+            $query .= "WHERE $field=? ";
             $binds[] = $producer;
         }
         $query .= "LIMIT " . ($page - 1) * self::PAGE_SIZE . "," . self::PAGE_SIZE;
@@ -33,7 +35,9 @@ class Control {
     }
 
     public function getAll() {
-        $query = "SELECT * FROM products";
+        $inst = new $this->obj_class();
+        $tbl = $inst->getTable();
+        $query = "SELECT * FROM $tbl";
         $stm = $this->db->query($query);
         $products = $stm->fetchAll(\PDO::FETCH_CLASS, $this->obj_class);
         $response = array();
