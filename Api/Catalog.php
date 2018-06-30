@@ -16,7 +16,7 @@ $path = explode('/', trim($_SERVER['PATH_INFO'],'/'));
 if(strtoupper($path[0]) == 'GET') {
     $producer = isset($_REQUEST['producer']) ? $_REQUEST['producer'] : null;
     $page = isset($_REQUEST['page']) && $_REQUEST['page'] > 0 ? $_REQUEST['page'] : 1;
-    $control = new \Data\Control();
+    $control = new \Data\Control("\Data\Catalog\Product");
     $catalog = $control->getByProducer($producer, $page);
     echo json_encode($catalog);
 }

@@ -8,7 +8,7 @@ $rows = array();
 $duplicate_sku = array();
 $no_sku = array();
 
-//Reads the csv into separate arrays
+
 if (($handle = fopen($file, "r")) !== false) {
     while (($data = fgetcsv($handle, 1000, ',','"')) !== false) {
         if($row != 1) {
@@ -28,19 +28,21 @@ if (($handle = fopen($file, "r")) !== false) {
     }
     fclose($handle);
 
-    $control = new \Data\Control();
+    $control = new \Data\Control("\Data\Catalog\Product");
     $current_products = $control->getAll();
 
-    //Prepares new products to add to DB
     $new_products = array_diff_key($rows, $current_products);
+    $new_products_total = count($new_products);
 
-    //Prepares a list of products to remove
     $products_to_remove = array_diff_key($current_products, $rows);
     $products_to_remove = array_keys($products_to_remove);
+    $products_to_remove_total = count($products_to_remove);
 
-    //Prepares the products that need to be updated
     $products_to_update = array();
+    $products_to_update_total = 0;
+
     $rows = array_diff_key($rows, $new_products);
+
     foreach ($rows as $key => $row) {
         $current_product = $current_products[$key];
         if(!$row->equals($current_product)) {
@@ -50,8 +52,8 @@ if (($handle = fopen($file, "r")) !== false) {
     }
 
     $rows_inserted = $control->insertBatch($new_products);
-    $rows_deleted = $control->deleteBatch($products_to_remove);
-    $rows_updated = $control->updateBatch($products_to_update);
+    $rows_deleted = $control->deleteBatch($products_to_remove, "sku");
+    $rows_updated = $control->updateBatch($products_to_update, "sku");
 
     $now = date('d/m/Y H:i:s', time());
     echo "Data Update $now:<br><br>";

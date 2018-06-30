@@ -1,7 +1,7 @@
 <?php
 require_once '\Data\Pages.php';
 require_once '\Data\Catalog\Product.php';
-require_once '\Data\Catalog\Control.php';
+require_once '\Data\Control.php';
 if(!defined('IS_SERVER') || !IS_SERVER) {
     die('ACCESS DENIED');
 }
