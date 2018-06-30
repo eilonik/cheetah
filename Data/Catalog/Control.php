@@ -77,25 +77,27 @@ class Control {
         return $inserted;
     }
 
-    public function deleteBatch($skus) {
-        if(empty($skus)) {
+    public function deleteBatch($identifier, $idField) {
+        if(empty($identifier)) {
             return 0;
         }
-        $skus = implode(',', $skus);
-        $query = "DELETE FROM products WHERE FIND_IN_SET(sku,:skus)";
+        $idBind = ":" . $idField;
+        $identifier = implode(',', $identifier);
+        $query = "DELETE FROM products WHERE FIND_IN_SET($idField,$idBind)";
         $stm = $this->db->prepare($query);
-        $stm->bindParam(':skus', $skus);
+        $stm->bindParam(':' . $idField, $identifier);
         $stm->execute();
         return $stm->rowCount();
     }
 
-    public function updateBatch($rows) {
+    public function updateBatch($rows, $idField) {
         $updated = 0;
         $now = time();
+        $bindField = ":" . $idField;
         foreach ($rows as $row) {
             $values = $row->getUpdateQueryValues("");
             $query = "UPDATE products SET $values,updated=$now
-                       WHERE sku=:sku; ";
+                       WHERE $idField=$bindField; ";
             $binds = $row->getQueryBinds("");
             $stm = $this->db->prepare($query);
             $stm->execute($binds);
