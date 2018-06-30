@@ -12,18 +12,26 @@ class Product {
         return $obj;
     }
 
+    public static function getFields(){
+        return "product_name,photo_url,barcode,sku,price_cents,producer";
+    }
+
     public function getQueryValues($bind) {
-        return ":product_name_$bind,:photo_url_$bind,:barcode_$bind,:sku_$bind,:price_cents_$bind,:producer_$bind";
+        return ":product_name$bind,:photo_url$bind,:barcode$bind,:sku$bind,:price_cents$bind,:producer$bind";
+    }
+
+    public function getUpdateQueryValues($bind) {
+        return "product_name=:product_name$bind,photo_url=:photo_url$bind,barcode=:barcode$bind,sku=:sku$bind,price_cents=:price_cents$bind,producer=:producer$bind";
     }
 
     public function getQueryBinds($bind) {
         return array(
-            "product_name_$bind" => $this->product_name,
-            "photo_url_$bind" => $this->photo_url,
-            "barcode_$bind" => $this->barcode,
-            "sku_$bind" => $this->sku,
-            "price_cents_$bind" => $this->price_cents,
-            "producer_$bind" => $this->producer
+            "product_name$bind" => $this->product_name,
+            "photo_url$bind" => $this->photo_url,
+            "barcode$bind" => $this->barcode,
+            "sku$bind" => $this->sku,
+            "price_cents$bind" => $this->price_cents,
+            "producer$bind" => $this->producer
         );
     }
 

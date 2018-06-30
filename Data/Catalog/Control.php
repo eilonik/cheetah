@@ -3,6 +3,7 @@
 namespace Data;
 
 use Data\Catalog\Pages;
+use Data\Catalog\Product;
 
 class Control {
     const PAGE_SIZE = 10;
@@ -49,7 +50,8 @@ class Control {
         $now = time();
         $inserted = 0;
         $binds = array();
-        $query = 'INSERT INTO products (product_name,photo_url,barcode,sku,price_cents,producer,added) VALUES ';
+        $fields = Product::getFields();
+        $query = 'INSERT INTO products (' . $fields . ',added) VALUES ';
         $values = "";
         $i = 1;
         foreach ($rows as $row) {
@@ -90,23 +92,13 @@ class Control {
     public function updateBatch($rows) {
         $updated = 0;
         $now = time();
-        $query = "UPDATE products SET 
-                        product_name=:product,
-                        photo_url=:photo_url,
-                        barcode=:barcode,
-                        price_cents=:price_cents,
-                        producer=:producer,
-                        updated=$now
-                       WHERE sku=:sku; ";
         foreach ($rows as $row) {
+            $values = $row->getUpdateQueryValues("");
+            $query = "UPDATE products SET $values,updated=$now
+                       WHERE sku=:sku; ";
+            $binds = $row->getQueryBinds("");
             $stm = $this->db->prepare($query);
-            $stm->bindParam(':product', $row->product_name);
-            $stm->bindParam(':photo_url', $row->photo_url);
-            $stm->bindParam(':barcode', $row->barcode);
-            $stm->bindParam(':price_cents', $row->price_cents);
-            $stm->bindParam(':producer', $row->producer);
-            $stm->bindParam(':sku', $row->sku);
-            $stm->execute();
+            $stm->execute($binds);
             $updated += $stm->rowCount();
         }
         return $updated;
